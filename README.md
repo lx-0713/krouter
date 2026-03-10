@@ -48,7 +48,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("io.github.lx-0713:krouter:1.0.0")
+                api("io.github.lx-0713:krouter:1.0.1")
                 // krouter 已传递 Decompose、Compose Runtime、kotlinx-serialization、Coroutines
             }
         }
@@ -57,7 +57,7 @@ kotlin {
 
 // KSP：让编译器处理 @KRoute，并生成 GeneratedRouteTable
 dependencies {
-    add("kspCommonMainMetadata", "io.github.lx-0713:krouter-compiler:1.0.0")
+    add("kspCommonMainMetadata", "io.github.lx-0713:krouter-compiler:1.0.1")
 }
 
 // 使 KSP 生成的代码对 commonMain 可见

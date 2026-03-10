@@ -11,7 +11,9 @@ group = findProperty("GROUP")?.toString() ?: "com.kmp"
 version = findProperty("KROUTER_VERSION")?.toString() ?: "1.0.0"
 
 kotlin {
-    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release", "debug")
+    }
 
     listOf(
         iosX64(),
