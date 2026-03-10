@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.serialization")
     id("com.android.library")
     id("org.jetbrains.compose")
-    id("com.google.devtools.ksp")
+    id("com.google.devtools.ksp") version "1.9.21-1.0.16"
 }
 
 kotlin {
@@ -23,8 +23,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                // krouter 路由框架（传递了 Decompose 核心、Serialization、Kermit、Coroutines）
-                api(project(":krouter"))
+                // krouter 路由框架（Maven Central）
+                api("io.github.lx-0713:krouter:1.0.1")
 
                 // Compose UI
                 api(compose.runtime)
@@ -58,7 +58,7 @@ kotlin {
 
 // KSP 处理器依赖配置
 dependencies {
-    add("kspCommonMainMetadata", project(":krouter-compiler"))
+    add("kspCommonMainMetadata", "io.github.lx-0713:krouter-compiler:1.0.1")
 }
 
 // 让 KSP 生成的代码对 commonMain 源集可见

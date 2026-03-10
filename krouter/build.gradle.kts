@@ -12,7 +12,7 @@ version = findProperty("KROUTER_VERSION")?.toString() ?: "1.0.0"
 
 kotlin {
     androidTarget {
-        publishLibraryVariants("release", "debug")
+        publishLibraryVariants("release")  // 只发布 release
     }
 
     listOf(
