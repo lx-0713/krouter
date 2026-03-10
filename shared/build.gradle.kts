@@ -24,6 +24,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // krouter 路由框架（Maven Central）
+//                api(project(":krouter"))
                 api("io.github.lx-0713:krouter:1.0.1")
 
                 // Compose UI
@@ -33,7 +34,7 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 api(compose.components.resources)
 
-                // Decompose Compose 扩展（栈动画等，krouter 不包含 UI 层）
+                // Decompose 的 Compose 扩展：根组件用 Children 渲染子页、stackAnimation 做转场，需单独依赖
                 api("com.arkivanov.decompose:extensions-compose:3.1.0")
             }
         }
@@ -58,6 +59,7 @@ kotlin {
 
 // KSP 处理器依赖配置
 dependencies {
+//    add("kspCommonMainMetadata", project(":krouter-compiler"))
     add("kspCommonMainMetadata", "io.github.lx-0713:krouter-compiler:1.0.1")
 }
 
