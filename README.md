@@ -1,5 +1,6 @@
 # KRouter
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.lx-0713/krouter.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.lx-0713/krouter)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 基于 [Decompose](https://github.com/arkivanov/Decompose) 的 **Kotlin Multiplatform（KMP）** 声明式路由库，提供注解自动注册、路由参数传递与页面结果回调，适用于 Compose Multiplatform 的 Android / iOS 等多端项目。
@@ -31,18 +32,7 @@
 
 ## 安装
 
-### 方式一：源码依赖（当前推荐）
-
-1. **Clone 本仓库**，将 `krouter` 与 `krouter-compiler` 作为子模块或复制到你的工程目录。
-
-2. **在 `settings.gradle.kts` 中引入模块：**
-
-```kotlin
-include(":krouter")
-include(":krouter-compiler")
-```
-
-3. **在需要使用路由的共享模块（如 `shared`）的 `build.gradle.kts` 中：**
+在需要使用路由的共享模块（如 `shared`）的 `build.gradle.kts` 中添加依赖：
 
 ```kotlin
 plugins {
@@ -58,7 +48,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":krouter"))
+                api("io.github.lx-0713:krouter:1.0.0")
                 // krouter 已传递 Decompose、Compose Runtime、kotlinx-serialization、Coroutines
             }
         }
@@ -67,7 +57,7 @@ kotlin {
 
 // KSP：让编译器处理 @KRoute，并生成 GeneratedRouteTable
 dependencies {
-    add("kspCommonMainMetadata", project(":krouter-compiler"))
+    add("kspCommonMainMetadata", "io.github.lx-0713:krouter-compiler:1.0.0")
 }
 
 // 使 KSP 生成的代码对 commonMain 可见
@@ -81,23 +71,12 @@ kotlin.sourceSets.commonMain {
 }
 ```
 
-### 方式二：Maven 发布（待发布后使用）
-
-发布到 Maven 仓库后，可改为：
-
-```kotlin
-// settings.gradle.kts 无需 include 本地模块
-
-// shared/build.gradle.kts
-dependencies {
-    commonMain.dependencies {
-        api("com.你的组:krouter:版本号")
-    }
-    add("kspCommonMainMetadata", "com.你的组:krouter-compiler:版本号")
-}
-```
-
-（具体 group/artifact/version 以实际发布为准。）
+> **确保项目的 `settings.gradle.kts` 或根 `build.gradle.kts` 中包含 `mavenCentral()` 仓库：**
+> ```kotlin
+> repositories {
+>     mavenCentral()
+> }
+> ```
 
 ---
 
@@ -330,38 +309,10 @@ Button(onClick = {
 
 ---
 
-## 项目结构（本仓库）
-
-```
-Demo/
-├── README.md                 # 本说明（KRouter 用法与集成）
-├── settings.gradle.kts
-├── build.gradle.kts
-├── androidApp/               # Android 应用壳，依赖 shared
-├── iosApp/                   # iOS 应用壳
-├── shared/                   # 共享业务与 UI，依赖 krouter，包含各 @KRoute 组件与 RootComponent
-├── krouter/                  # 路由库核心（可单独发布）
-│   ├── src/commonMain/kotlin/com/kmp/krouter/
-│   │   ├── KRouter.kt        # 路由单例与 createChildStack
-│   │   ├── KRouterComponent.kt
-│   │   ├── KRouteAnnotation.kt  # @KRoute 注解
-│   │   ├── KRouteConfig.kt   # 可序列化路由配置（path + bundle）
-│   │   └── KBundle.kt       # 参数容器与 KBundleSerializer
-│   └── build.gradle.kts
-└── krouter-compiler/         # KSP 处理器，生成 GeneratedRouteTable
-    └── src/main/kotlin/com/kmp/krouter/compiler/
-        ├── KRouteProcessor.kt
-        └── KRouteProcessorProvider.kt
-```
-
-KSP 会在使用 `@KRoute` 的模块的 `build/generated/ksp/metadata/commonMain/kotlin` 下生成 `com.kmp.krouter.generated.GeneratedRouteTable`，在根组件中调用 `GeneratedRouteTable.register()` 即可完成注册。
-
----
-
 ## 依赖版本（krouter 模块）
 
-| 依赖 | 用途 |
-|------|------|
+| 依赖 | 版本 | 用途 |
+|------|------|------|
 | Decompose | 3.1.0 | 路由栈、ComponentContext、状态保存与恢复 |
 | Compose Runtime | 与工程一致 | `@Composable Content()` |
 | kotlinx-serialization-json | 1.6.3 | KRouteConfig、KBundle 对象序列化 |

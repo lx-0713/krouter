@@ -1,9 +1,14 @@
 plugins {
+    id("com.android.library")
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    id("com.android.library")
     id("org.jetbrains.compose")
+    id("maven-publish")
+    id("signing")
 }
+
+group = findProperty("GROUP")?.toString() ?: "com.kmp"
+version = findProperty("KROUTER_VERSION")?.toString() ?: "1.0.0"
 
 kotlin {
     androidTarget()
@@ -62,5 +67,59 @@ android {
     }
     kotlin {
         jvmToolchain(17)
+    }
+}
+
+// Maven Local for testing; Sonatype for Maven Central (can publish alone or with root publishToSonatype)
+publishing {
+    repositories {
+        mavenLocal()
+        maven {
+            name = "sonatype"
+            url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+            credentials {
+                username = findProperty("ossrhUsername")?.toString() ?: System.getenv("OSSRH_USERNAME") ?: ""
+                password = findProperty("ossrhPassword")?.toString() ?: System.getenv("OSSRH_PASSWORD") ?: ""
+            }
+        }
+    }
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            name.set(project.name)
+            description.set("Kotlin Multiplatform router with Decompose and Compose.")
+            url.set("https://github.com/lx-0713/krouter")
+            licenses {
+                license {
+                    name.set("Apache-2.0")
+                    url.set("https://opensource.org/licenses/Apache-2.0")
+                }
+            }
+            developers {
+                developer {
+                    id.set("lx-0713")
+                    name.set("lixiong")
+                }
+            }
+            scm {
+                url.set("https://github.com/lx-0713/krouter")
+                connection.set("scm:git:git://github.com/lx-0713/krouter.git")
+                developerConnection.set("scm:git:ssh://git@github.com/lx-0713/krouter.git")
+            }
+        }
+    }
+}
+
+signing {
+    val keyId = findProperty("signing.keyId")?.toString() ?: System.getenv("SIGNING_KEY_ID")
+    val secretKey = findProperty("signing.secretKey")?.toString() ?: System.getenv("SIGNING_SECRET_KEY")
+    val password = findProperty("signing.password")?.toString() ?: System.getenv("SIGNING_PASSWORD")
+    val keyFile = findProperty("signing.secretKeyRingFile")?.toString()?.let { path -> file(path) }
+    if (keyId != null && password != null && (secretKey != null || keyFile?.exists() == true)) {
+        if (secretKey != null) {
+            useInMemoryPgpKeys(keyId, secretKey, password)
+        } else {
+            useInMemoryPgpKeys(keyId, keyFile!!.readText(), password)
+        }
+        sign(publishing.publications)
     }
 }
