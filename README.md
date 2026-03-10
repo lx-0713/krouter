@@ -190,7 +190,7 @@ class RootComponent(componentContext: ComponentContext) : KRouterComponent(compo
 }
 ```
 
-注意：`createChildStack` 的第二个参数为**初始路由路径**（例如登录页 `/login`）。`Children` 来自 Decompose 的 `extensions-compose`，需在 `commonMain` 中依赖：
+注意：`createChildStack` 的第二个参数为**初始路由路径**（例如登录页 `/login`）。根组件用 **Children** 渲染子页、**stackAnimation** 做转场动画，需依赖 Decompose 的 `extensions-compose`：
 
 ```kotlin
 api("com.arkivanov.decompose:extensions-compose:3.1.0")
